@@ -12,7 +12,7 @@ opt.device = "cuda"
 opt.seed = 1
 
 # Learning
-opt.lr_e = 3e-4
+opt.lr_e = 3e-5
 opt.groupdro_eta = 0.1 # DRO's eta hyper-parameter
 opt.lmbda = 0.1 # regularizer
 opt.beta1 = 0.9
