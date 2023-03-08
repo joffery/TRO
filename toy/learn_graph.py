@@ -16,15 +16,12 @@ from utils.centrality import get_centrality
 from utils.utils import *
 from utils.graph_utils import *
 
-parser = argparse.ArgumentParser(description='Topology-Aware Distributionally Robust Optimization')
+parser = argparse.ArgumentParser(description='Topology-Aware Robust Optimization for OOD Generalization')
 parser.add_argument('--dataset', default='toy_d15', type=str, help='toy_d15, toy_d60')
 parser.add_argument('--epochs', default=20, type=int, help='number of total epochs to run ERM')
 parser.add_argument('--batch_size', default=10, type=int, help='mini-batch size (default: 10)')
 parser.add_argument('--lr_e',  default=3e-5, type=float, help='initial learning rate')
-parser.add_argument('--gpu_id', default=1, type=int, help='gpu id')
-
-# Use diffusion EMD or mean/var
-parser.add_argument('--diffusion', default=1, type=int, help='use diffusion EMD or mean/var')
+parser.add_argument('--gpu_id', default=0, type=int, help='gpu id')
 
 cudnn.benchmark = True
 
@@ -45,7 +42,6 @@ torch.manual_seed(opt.seed)
 
 opt.model = "ERM"
 opt.dataset = args.dataset
-opt.diffusion = args.diffusion
 opt.outf = None
 
 print("dataset: {}".format(opt.dataset))
@@ -80,9 +76,6 @@ print(f"Data: {data_pkl['data'].shape}\nLabel: {data_pkl['label'].shape}")
 
 opt.A = data_pkl["A"]
 data = data_pkl["data"]
-data_mean = data.mean(0, keepdims=True) # Only use src domains for normalization
-data_std = data.std(0, keepdims=True)
-data_pkl["data"] = (data - data_mean) / data_std  # normalize the raw data
 datasets = [ToyDataset(data_pkl, i) for i in range(opt.num_domain)] # sub dataset for each domain
 dataset = SeqToyDataset(datasets, size=len(datasets[0]))  # mix sub dataset to a large one
 dataloader = DataLoader(dataset=dataset, shuffle=True, batch_size=opt.batch_size)
@@ -107,13 +100,8 @@ print("x_seq_feat", x_seq_feat.shape)
 n_distributions = x_seq_feat.shape[0]
 n_points_per_distribution = x_seq_feat.shape[1]
 
-# Get distance matrix
-if opt.diffusion == 0:
-    # 1. Use mean/var to get the matrix
-    dis_matrix = mean_var(x_seq_feat)
-else:
-    # 2. Use diffusion EMD to get the matrix
-    dis_matrix = emd(x_seq_feat, feat_size, n_distributions, n_points_per_distribution)
+# Use diffusion EMD to get the matrix
+dis_matrix = emd(x_seq_feat, feat_size, n_distributions, n_points_per_distribution)
 
 print("distance matrix", dis_matrix)
 print(dis_matrix.shape)
@@ -127,8 +115,5 @@ rule = (dis_matrix < thres) & (dis_matrix != 0)
 A[rule] = 1
 
 centrality = get_centrality(A)
-# if centrality.sum() == 0.0:
-#     centrality = np.ones_like(centrality)
-# centrality /= centrality.sum()
 centrality = np.around(centrality, 3)
 print(list(centrality))

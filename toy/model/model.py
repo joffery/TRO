@@ -42,11 +42,6 @@ class BaseModel(nn.Module):
             self.env = Visdom(port=opt.visdom_port)
             self.test_pane = dict()
 
-        self.val_acc = 0
-        self.val_msg = ''
-        self.best_acc = []
-
-        self.val_domain = int(opt.val_domain)
         self.src_domain = opt.src_domain
         self.criterion = nn.NLLLoss().cuda()
         self.netE = FeatureNet(opt).to(opt.device) # encoder
@@ -164,7 +159,7 @@ class BaseModel(nn.Module):
         acc = to_np(torch.cat(acc_curve, 1).mean(-1))
 
         test_acc = (
-                (acc.sum() - acc[self.opt.src_domain].sum())  # Should also substract val domain
+                (acc.sum() - acc[self.opt.src_domain].sum())
                 / (self.opt.num_target)
                 * 100
         )
@@ -173,27 +168,9 @@ class BaseModel(nn.Module):
         each_domain_acc = [str(i) for i in np.around(acc * 100, decimals=1)]
         each_domain_acc_msg = "[" + ",  ".join(each_domain_acc) + "]"
 
-        val_acc = acc[self.val_domain]
-        if val_acc >= self.val_acc:
-            self.val_acc = val_acc
-            self.val_acc_all = each_domain_acc_msg
-            self.val_msg = acc_msg
-            if self.outf:
-                name = self.outf + "/model_best.pth"
-                self.save(name)
-
-        if "DRO" in self.model_name or "TRO" in self.model_name:
-            q = np.around(to_np(self.q), decimals=2)
-            q = [str(i) for i in q]
-            q_msg = "q: " + "[" + ",  ".join(q) + "]"
-            print(q_msg)
-            if self.outf:
-                self.__log_write__(q_msg)
         if self.outf:
             self.__log_write__(acc_msg)
             self.__log_write__(each_domain_acc_msg)
-            self.__log_write__(self.val_msg)
-            self.__log_write__(self.val_acc_all)
 
         if self.use_visdom:
             self.__vis_test_error__(test_acc, "test acc")
@@ -432,11 +409,12 @@ class TRO(BaseModel):
             # DG-15
             if "15" in opt.dataset:
                 # replace self.prior with values generated from learn_graph.py
-                self.prior = [0.0, 0.0, 0.0, 0.4, 0.0, 0.0]
+                self.prior = [0.0, 0.0, 0.0, 0.0, 0.0, 0.4]
             elif "60" in opt.dataset:
-                self.prior = [0.0, 0.0, 0.0, 0.2, 0.0, 0.0]
-                
+                self.prior = [0.0, 0.0, 0.0, 0.0, 0.0, 0.2]
+
             self.prior = np.asarray(self.prior)
+            self.prior /= self.prior.sum()
 
         self.prior = torch.from_numpy(self.prior).to(self.device)
 

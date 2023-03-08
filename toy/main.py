@@ -11,17 +11,16 @@ import torch.backends.cudnn as cudnn
 from data_loader.data_loader import ToyDataset, SeqToyDataset
 from utils.utils import *
 
-parser = argparse.ArgumentParser(description='Topology-Aware Distributionally Robust Optimization')
+parser = argparse.ArgumentParser(description='Topology-Aware Robust Optimization for OOD Generalization')
 parser.add_argument('--dataset', default='toy_d15', type=str, help='toy_d15, toy_d60, weather')
 parser.add_argument('--epochs', default=20, type=int, help='number of total epochs to run')
-parser.add_argument('--model', default='ERM', type=str, help='ERM, IRM, DRO, GDRO, GDRO_exp, GDRO_proj')
+parser.add_argument('--model', default='ERM', type=str, help='ERM, IRM, DRO, TRO')
 parser.add_argument('--batch_size', default=10, type=int, help='mini-batch size (default: 10)')
-parser.add_argument('--val_domain', default=2, type=str, help='validation domain')
 parser.add_argument('--gpu_id', default=1, type=int, help='gpu id')
 
 # Partial
-parser.add_argument('--learn', default=1, type=int, help='data graph (learn=1) or physical (learn=0)')
-parser.add_argument('--partial', default=0, type=int, help='partial (source) or full (source + target)')
+parser.add_argument('--learn', default=1, type=int, help='data graph (1) or physical (0)')
+parser.add_argument('--partial', default=0, type=int, help='source (1) or source + target (0), only for physical graph')
 
 # IRM
 parser.add_argument('--irm_penal', default=1e-1, type=float, help='irm penalty coefficient')
@@ -68,7 +67,7 @@ opt.partial = args.partial
 if args.dataset == "toy_d15":
     opt.num_domain = 15
     # the specific source and target domain:
-    opt.src_domain = [0, 12, 3, 4, 14, 8]
+    opt.src_domain = [0, 12, 3, 4, 14, 8] #Corresponds to 1-6 in Figure 2 (a)
 elif args.dataset == "toy_d60":
     opt.num_domain = 60
     # the specific source and target domain:
@@ -88,15 +87,11 @@ with open(data_source, "rb") as data_file:
     data_pkl = pickle.load(data_file)
 print(f"Data: {data_pkl['data'].shape}\nLabel: {data_pkl['label'].shape}")
 
-# All datasets needs a val_domain
-opt.val_domain = args.val_domain
-print("src domain: {}, val domain: {}".format(opt.src_domain, opt.val_domain))
-
 # set up experiment directory
 opt.outf = setup_experiment(args, opt)
 
 # build dataset
-opt.A = data_pkl["A"] # physical graph's adjacence matrix
+opt.A = data_pkl["A"] # physical graph's adjacent matrix
 data = data_pkl["data"]
 
 # dataloader
