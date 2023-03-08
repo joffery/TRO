@@ -18,7 +18,7 @@ Out-of-distribution (OOD) generalization is a challenging machine learning probl
 As generalizing to arbitrary test distributions is impossible, we hypothesize that further structure on the topology of distributions is crucial in developing strong OOD resilience. 
 To this end, we propose topology-aware robust optimization (TRO) that seamlessly integrates distributional topology in a principled optimization framework.
 
-<p align="center"><img src="fig/ICLR2023.png" width="80%" alt="" /></p>
+<p align="center"><img src="fig/ICLR2023.png" width="50%" alt="" /></p>
 
 ## Quick start
 This repository reproduces our results on DG-15/60, TPT-48, and DomainBed, which is build upon Python3 and Pytorch v1.9.0 on Ubuntu 18.04.
