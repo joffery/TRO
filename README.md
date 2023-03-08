@@ -4,8 +4,7 @@ This repository holds the Pytorch implementation of [Topology-aware Robust Optim
 If you find our code useful in your research, please consider citing:
 
 ```
-@inproceedings{
-qiao2023topologyaware,
+@inproceedings{qiao2023tro,
 title={Topology-aware Robust Optimization for Out-of-Distribution Generalization},
 author={Fengchun Qiao and Xi Peng},
 booktitle={The Eleventh International Conference on Learning Representations},
@@ -19,7 +18,7 @@ Out-of-distribution (OOD) generalization is a challenging machine learning probl
 As generalizing to arbitrary test distributions is impossible, we hypothesize that further structure on the topology of distributions is crucial in developing strong OOD resilience. 
 To this end, we propose topology-aware robust optimization (TRO) that seamlessly integrates distributional topology in a principled optimization framework.
 
-<p align="center"><img src="fig/ICLR2023" width="100%" alt="" /></p>
+![overview](fig/ICLR2023.png)
 
 
 ## Quick start
@@ -34,7 +33,7 @@ pip install -r requirements.txt
 
 Illustration of data groups in (a) DG-15 and (b) DG-60 datasets:
 
-<p align="center"><img src="fig/toy" width="100%" alt="" /></p>
+![toy](fig/toy.png)
 
 To reproduce the results of TRO with physical-based topology on DG-15, please run:
 
