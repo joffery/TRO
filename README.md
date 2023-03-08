@@ -7,7 +7,7 @@ If you find our code useful in your research, please consider citing:
 @inproceedings{qiao2023tro,
 title={Topology-aware Robust Optimization for Out-of-Distribution Generalization},
 author={Fengchun Qiao and Xi Peng},
-booktitle={The Eleventh International Conference on Learning Representations},
+booktitle={International Conference on Learning Representations (ICLR)},
 year={2023}
 }
 ```
@@ -18,8 +18,7 @@ Out-of-distribution (OOD) generalization is a challenging machine learning probl
 As generalizing to arbitrary test distributions is impossible, we hypothesize that further structure on the topology of distributions is crucial in developing strong OOD resilience. 
 To this end, we propose topology-aware robust optimization (TRO) that seamlessly integrates distributional topology in a principled optimization framework.
 
-![overview](fig/ICLR2023.png)
-
+<p align="center"><img src="fig/ICLR2023.png" width="80%" alt="" /></p>
 
 ## Quick start
 This repository reproduces our results on DG-15/60, TPT-48, and DomainBed, which is build upon Python3 and Pytorch v1.9.0 on Ubuntu 18.04.
