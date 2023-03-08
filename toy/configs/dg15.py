@@ -17,6 +17,7 @@ opt.lmbda = 100. # regularizer
 opt.beta1 = 0.9
 opt.no_bn = True
 opt.threshold = 80
+opt.num_epoch = 20
 
 # model size configs, used for E, F
 opt.nx = 2  # dimension of the input data

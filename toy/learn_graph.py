@@ -83,7 +83,7 @@ dataloader = DataLoader(dataset=dataset, shuffle=True, batch_size=opt.batch_size
 model = Model(opt).to(opt.device)
 
 # Train ERM model (super quick)
-for epoch in range(args.epochs):
+for epoch in range(opt.num_epoch):
     model.learn(epoch, dataloader)
 
 # Get embeddings from ERM model

@@ -11,12 +11,11 @@ import torch.backends.cudnn as cudnn
 from data_loader.data_loader import ToyDataset, SeqToyDataset
 from utils.utils import *
 
-parser = argparse.ArgumentParser(description='Topology-Aware Robust Optimization for OOD Generalization')
+parser = argparse.ArgumentParser(description='Topology-aware Robust Optimization for OOD Generalization')
 parser.add_argument('--dataset', default='toy_d15', type=str, help='toy_d15, toy_d60, weather')
-parser.add_argument('--epochs', default=20, type=int, help='number of total epochs to run')
 parser.add_argument('--model', default='ERM', type=str, help='ERM, IRM, DRO, TRO')
 parser.add_argument('--batch_size', default=10, type=int, help='mini-batch size (default: 10)')
-parser.add_argument('--gpu_id', default=1, type=int, help='gpu id')
+parser.add_argument('--gpu_id', default=0, type=int, help='gpu id')
 
 # Partial
 parser.add_argument('--learn', default=1, type=int, help='data graph (1) or physical (0)')
@@ -58,7 +57,6 @@ elif opt.model == "TRO":
     from model.model import TRO as Model
 
 # Important params
-opt.num_epoch = args.epochs
 opt.batch_size = args.batch_size
 
 opt.learn = args.learn
